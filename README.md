@@ -22,7 +22,7 @@ To run the project locally, follow these steps:
    cd streaming-server-with-frontend
    ```
 
-3. Copy the "hls" folder into the "backend" folder. This step is necessary to provide the HLS streaming files for the backend.
+3. Copy the "hls" (with this name) folder into the "backend" folder. This step is necessary to provide the HLS streaming files for the backend.
 
 4. Build and start the Docker containers using Docker Compose:
    ```

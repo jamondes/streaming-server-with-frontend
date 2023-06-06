@@ -13,7 +13,7 @@ export default function AuthStatus() {
         Sign out
       </button>
       <button onClick={expireToken}>
-        Expire Token
+        Simulate Token Expiration
       </button>
     </p>
   );

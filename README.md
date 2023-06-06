@@ -22,18 +22,20 @@ To run the project locally, follow these steps:
    cd streaming-server-with-frontend
    ```
 
-3. Build and start the Docker containers using Docker Compose:
+3. Copy the "hls" folder into the "backend" folder. This step is necessary to provide the HLS streaming files for the backend.
+
+4. Build and start the Docker containers using Docker Compose:
    ```
    docker-compose up --build
    ```
 
    The `--build` flag ensures that the images are rebuilt if any changes are detected in the Dockerfiles or the source code.
 
-4. Once the containers are up and running, you can access the application in your web browser:
+5. Once the containers are up and running, you can access the application in your web browser:
    - Backend: [http://localhost:8080](http://localhost:8080)
    - Frontend: [http://localhost:3000](http://localhost:3000)
 
-5. Press `Ctrl + C` in the terminal to stop the containers when you're done.
+6. Press `Ctrl + C` in the terminal to stop the containers when you're done.
 
 ## Folder Structure
 

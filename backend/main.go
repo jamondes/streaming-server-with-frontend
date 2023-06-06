@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -13,6 +14,24 @@ import (
 
 	"backend/app"
 )
+
+func connectToDatabase(connStr string) (*gorm.DB, error) {
+	const maxRetries = 5
+	var db *gorm.DB
+	var err error
+
+	for i := 0; i < maxRetries; i++ {
+		db, err = gorm.Open("postgres", connStr)
+		if err == nil {
+			return db, nil
+		}
+
+		log.Printf("Failed to connect to the database. Retrying in %d seconds...", (i+1)*2)
+		time.Sleep(time.Duration(i+1) * 2 * time.Second)
+	}
+
+	return nil, err
+}
 
 func main() {
 	connStr := "postgres://myuser:mypassword@db:5432/myapp?sslmode=disable"
@@ -23,7 +42,7 @@ func main() {
 		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
 	)
 
-	db, err := gorm.Open("postgres", connStr)
+	db, err := connectToDatabase(connStr)
 	if err != nil {
 		log.Fatal("Failed to connect to the database:", err)
 	}

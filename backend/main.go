@@ -62,33 +62,14 @@ func main() {
 
 	const hlsDir = "hls"
 	const port = 8080
+	addr := fmt.Sprintf(":%d", port)
 
 	router.PathPrefix("/stream/").Handler(app.TokenValidationMiddleware(http.StripPrefix("/stream/", http.FileServer(http.Dir(hlsDir)))))
 
-	router.HandleFunc("/api/sign-out", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-			return
-		}
-
-		authorizationHeader := r.Header.Get("Authorization")
-		if authorizationHeader == "" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-		tokenString, err := app.ExtractTokenFromHeader(authorizationHeader)
-		if err != nil {
-			log.Fatal("Failed to extract token from header:", err)
-		}
-
-		app.BlacklistToken(tokenString)
-
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Token has been blacklisted"))
-	})
+	router.HandleFunc("/api/sign-out", app.SignOutHandler).Methods("POST")
 
 	fmt.Printf("Starting server on %v\n", port)
 
 	loggerHandler := handlers.LoggingHandler(os.Stdout, corsMiddleware(router))
-	log.Fatal(http.ListenAndServe(":8080", loggerHandler))
+	log.Fatal(http.ListenAndServe(addr, loggerHandler))
 }

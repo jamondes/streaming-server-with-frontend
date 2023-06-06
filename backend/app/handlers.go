@@ -14,6 +14,30 @@ import (
 
 var blacklistedTokens = make(map[string]bool)
 
+func SignOutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	authorizationHeader := r.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	tokenString, err := ExtractTokenFromHeader(authorizationHeader)
+	if err != nil {
+		http.Error(w, "Failed to extract token from header", http.StatusBadRequest)
+		return
+	}
+
+	BlacklistToken(tokenString)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Token has been blacklisted"))
+}
+
 func LoginHandler(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var loginReq LoginRequest

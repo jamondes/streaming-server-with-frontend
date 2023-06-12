@@ -38,7 +38,7 @@ func main() {
 
 	corsMiddleware := handlers.CORS(
 		handlers.AllowedOrigins([]string{"*", "http://localhost:3000"}),
-		handlers.AllowedMethods([]string{"GET", "POST"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "DELETE"}),
 		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
 	)
 
@@ -62,21 +62,15 @@ func main() {
 
 	router.HandleFunc("/api/create-account", app.CreateAccountHandler(db)).Methods("POST")
 	router.HandleFunc("/api/login", app.LoginHandler(db)).Methods("POST")
-
-	router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Connection to PostgreSQL successful!")
-	})
-
-	const hlsDir = "hls"
-	const port = 8080
-	addr := fmt.Sprintf(":%d", port)
-
-	router.PathPrefix("/stream/").Handler(app.TokenValidationMiddleware(http.StripPrefix("/stream/", http.FileServer(http.Dir(hlsDir)))))
-
-	router.HandleFunc("/api/sign-out", app.SignOutHandler).Methods("POST")
+	router.HandleFunc("/test", app.TestHandler)
+	router.PathPrefix("/stream/").Handler(app.DeviceTokenValidationMiddlewareForFiles(db, http.StripPrefix("/stream/", http.FileServer(http.Dir(hlsDir)))))
+	router.HandleFunc("/api/sign-out", app.SignOutHandler(db)).Methods("POST")
+	router.HandleFunc("/api/user/devices/{deviceID}", app.DeviceTokenValidationMiddlewareForRoutes(db, app.RemoveUserDeviceHandler(db))).Methods("DELETE")
+	router.HandleFunc("/api/user/devices", app.DeviceTokenValidationMiddlewareForRoutes(db, app.GetUserDevicesHandler(db))).Methods("GET")
 
 	fmt.Printf("Starting server on %v\n", port)
 
 	loggerHandler := handlers.LoggingHandler(os.Stdout, corsMiddleware(router))
+
 	log.Fatal(http.ListenAndServe(addr, loggerHandler))
 }

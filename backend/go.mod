@@ -14,4 +14,6 @@ require (
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
+	github.com/mileusna/useragent v1.3.3 // indirect
+	github.com/mssola/user_agent v0.6.0 // indirect
 )

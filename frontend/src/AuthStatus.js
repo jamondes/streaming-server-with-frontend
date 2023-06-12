@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useAuth } from './auth';
+import { Button } from '@mui/material';
+import DevicesModal from './DeviceModal';
 
 export default function AuthStatus() {
   const { user, signOut, expireToken } = useAuth();
@@ -9,12 +11,16 @@ export default function AuthStatus() {
   return (
     <p>
       Welcome {user.email}!{' '}
-      <button onClick={signOut}>
+      <Button onClick={signOut}>
         Sign out
-      </button>
-      <button onClick={expireToken}>
+      </Button>
+      <Button onClick={expireToken}>
         Simulate Token Expiration
-      </button>
+      </Button>
+      <Button onClick={expireToken}>
+        Simulate Token Expiration
+      </Button>
+      <DevicesModal  />
     </p>
   );
 }

@@ -17,6 +17,18 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+type Device struct {
+	ID         uint   `gorm:"primaryKey"`
+	UserEmail  string `gorm:"not null; foreignKey:UserEmail; references:Email"`
+	DeviceName string `gorm:"not null"`
+	Token      string `gorm:"not null"`
+}
+
+type Subscription struct {
+	UserEmail         string `gorm:"not null; foreignKey:UserEmail; references:Email"`
+	SubscriptionLevel string `gorm:"not null"`
+}
+
 func RetrieveUserByEmail(db *gorm.DB, email string) (User, error) {
 	var user User
 	err := db.Where("email = ?", email).First(&user).Error

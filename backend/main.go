@@ -48,11 +48,18 @@ func main() {
 	}
 	defer db.Close()
 
+	const hlsDir = "hls"
+	const port = 8080
+	addr := fmt.Sprintf(":%d", port)
+
 	db.AutoMigrate(&app.User{})
+	db.AutoMigrate(&app.Device{})
+	db.AutoMigrate(&app.Subscription{})
 
 	fmt.Println("Connected to the PostgreSQL database!")
 
 	router := mux.NewRouter()
+
 	router.HandleFunc("/api/create-account", app.CreateAccountHandler(db)).Methods("POST")
 	router.HandleFunc("/api/login", app.LoginHandler(db)).Methods("POST")
 
